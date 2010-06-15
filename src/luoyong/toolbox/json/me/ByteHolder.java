@@ -10,6 +10,8 @@ public interface ByteHolder {
 
    public byte getNextByte() throws EOFException;
 
+   public byte getCurrentByte() throws EOFException;
+
    /**
     * Begin cache next bytes that not read.
     */

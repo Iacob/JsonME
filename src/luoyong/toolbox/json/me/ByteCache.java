@@ -33,6 +33,15 @@ public class ByteCache implements ByteHolder {
       }
    }
 
+   public byte getCurrentByte() throws EOFException {
+      if (nextPosition < byteArrayLength) {
+         // Return current byte.
+         return bytes[nextPosition - 1];
+      }else {
+         throw new EOFException();
+      }
+   }
+
    public void beginCache() {
       this.beginCachePosition = this.nextPosition;
       this.endCachePosition = 0;
