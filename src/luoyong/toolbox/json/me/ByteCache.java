@@ -23,8 +23,11 @@ public class ByteCache implements ByteHolder {
 
    public byte getNextByte() throws EOFException {
       if (nextPosition < byteArrayLength) {
+         // Point cursor to next byte.
+         // Position of current byte is (nextPosition - 1).
          nextPosition++;
-         return bytes[nextPosition];
+         // Return current byte.
+         return bytes[nextPosition - 1];
       }else {
          throw new EOFException();
       }
@@ -32,6 +35,7 @@ public class ByteCache implements ByteHolder {
 
    public void beginCache() {
       this.beginCachePosition = this.nextPosition;
+      this.endCachePosition = 0;
    }
    
    public void beginCacheAndCacheCurrentByte() {
