@@ -6,7 +6,7 @@ package luoyong.toolbox.json.me;
  */
 public class JsonParser {
 
-   private static class NumberParser {
+   public static class NumberParser {
       public static void matchRestNumberText(ByteHolder byteHolder,
               StringBuffer stringCache)
               throws JsonSyntaxException, EOFException {
@@ -24,11 +24,9 @@ public class JsonParser {
                if (JsonParser.isDigit(currentByte)) {
                   continue;
                }else if (currentByte == '.') {
-                  // TODO match fractional part.
-               }else if (JsonParser.isWhiteSpace(currentByte)
-                       || (currentByte == '}')
-                       || (currentByte == ']')
-                       || (currentByte == ',')) {
+                  matchFractionalAndScientificPart(byteHolder, stringCache);
+                  return;
+               }else if (isNumberEndByte(currentByte)) {
 
                   byteHolder.endCache();
                   stringCache.append(byteHolder
@@ -42,6 +40,84 @@ public class JsonParser {
             // TODO
          }else {
             throw new JsonSyntaxException("Invalid number format.");
+         }
+      }
+
+      private static void matchFractionalAndScientificPart(ByteHolder byteHolder,
+              StringBuffer stringCache)
+              throws JsonSyntaxException, EOFException {
+
+         byte currentByte = byteHolder.getNextByte();
+
+         if (!JsonParser.isDigit(currentByte)) {
+            throw new JsonSyntaxException("Invalid number format.");
+         }
+
+         for (;;) {
+
+            currentByte = byteHolder.getNextByte();
+
+            if (JsonParser.isDigit(currentByte)) {
+               continue;
+            }else if (isNumberEndByte(currentByte)) {
+
+               byteHolder.endCache();
+               stringCache.append(byteHolder
+                       .getCachedBytesAsStringWithoutTrailing("iso-8859-1"));
+               return;
+            }else if ((currentByte == 'e') || (currentByte == 'E')) {
+               currentByte = byteHolder.getNextByte();
+               if ((currentByte == '+') || (currentByte == '-')) {
+                  for (;;) {
+                     currentByte = byteHolder.getNextByte();
+                     if (!JsonParser.isDigit(currentByte)) {
+                        
+                     }else if (isNumberEndByte(currentByte)) {
+                        byteHolder.endCache();
+                        stringCache.append(byteHolder
+                                .getCachedBytesAsStringWithoutTrailing(
+                                "iso-8859-1"));
+                        return;
+                     }else {
+                        throw new JsonSyntaxException("Invalid number format.");
+                     }
+                  }
+               }else if (JsonParser.isDigit(currentByte)) {
+                  for (;;) {
+                     currentByte = byteHolder.getNextByte();
+                     if (!JsonParser.isDigit(currentByte)) {
+                     } else if (isNumberEndByte(currentByte)) {
+                        byteHolder.endCache();
+                        stringCache.append(byteHolder
+                                .getCachedBytesAsStringWithoutTrailing(
+                                "iso-8859-1"));
+                        return;
+                     } else {
+                        throw new JsonSyntaxException("Invalid number format.");
+                     }
+                  }
+               }else {
+                  throw new JsonSyntaxException("Invalid number format.");
+               }
+            }else {
+               throw new JsonSyntaxException("Invalid number format.");
+            }
+         }
+      }
+
+      /**
+       * Examine if the byte is the end of a Json number.
+       * @param charValue the byte to examine
+       * @return if the byte is the end of a Json number
+       */
+      private static boolean isNumberEndByte(byte charValue) {
+         if (JsonParser.isWhiteSpace(charValue)
+                 || (charValue == '}')
+                 || (charValue == ']')
+                 || (charValue == ',')) {
+            return true;
+         } else {
+            return false;
          }
       }
    }
