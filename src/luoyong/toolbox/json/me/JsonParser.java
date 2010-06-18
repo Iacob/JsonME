@@ -84,10 +84,16 @@ public class JsonParser {
             }else if ((currentByte == 'e') || (currentByte == 'E')) {
                currentByte = byteHolder.getNextByte();
                if ((currentByte == '+') || (currentByte == '-')) {
+
+                  currentByte = byteHolder.getNextByte();
+                  if (!JsonParser.isDigit(currentByte)) {
+                     throw new JsonSyntaxException("Invalid number format.");
+                  }
+
                   for (;;) {
                      currentByte = byteHolder.getNextByte();
-                     if (!JsonParser.isDigit(currentByte)) {
-                        
+                     if (JsonParser.isDigit(currentByte)) {
+                        continue;
                      }else if (isNumberEndByte(currentByte)) {
                         byteHolder.endCache();
                         stringCache.append(byteHolder
@@ -101,7 +107,8 @@ public class JsonParser {
                }else if (JsonParser.isDigit(currentByte)) {
                   for (;;) {
                      currentByte = byteHolder.getNextByte();
-                     if (!JsonParser.isDigit(currentByte)) {
+                     if (JsonParser.isDigit(currentByte)) {
+                        continue;
                      } else if (isNumberEndByte(currentByte)) {
                         byteHolder.endCache();
                         stringCache.append(byteHolder
