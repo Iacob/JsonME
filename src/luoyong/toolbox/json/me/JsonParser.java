@@ -32,6 +32,9 @@ public class JsonParser {
                   stringCache.append(byteHolder
                           .getCachedBytesAsStringWithoutTrailing("iso-8859-1"));
                   return;
+               }else if ((currentByte == 'e') || (currentByte == 'E')) {
+                   // Match scientific part.
+                   matchRestScientificPart(byteHolder, stringCache);
                }else {
                   throw new JsonSyntaxException("Invalid number format.");
                }
@@ -82,56 +85,64 @@ public class JsonParser {
                        .getCachedBytesAsStringWithoutTrailing("iso-8859-1"));
                return;
             }else if ((currentByte == 'e') || (currentByte == 'E')) {
-               currentByte = byteHolder.getNextByte();
-               if ((currentByte == '+') || (currentByte == '-')) {
-
-                  currentByte = byteHolder.getNextByte();
-                  if (!JsonParser.isDigit(currentByte)) {
-                     throw new JsonSyntaxException("Invalid number format.");
-                  }
-
-                  for (;;) {
-                     currentByte = byteHolder.getNextByte();
-                     if (JsonParser.isDigit(currentByte)) {
-                        continue;
-                     }else if (isNumberEndByte(currentByte)) {
-                        byteHolder.endCache();
-                        stringCache.append(byteHolder
-                                .getCachedBytesAsStringWithoutTrailing(
-                                "iso-8859-1"));
-                        return;
-                     }else {
-                        throw new JsonSyntaxException("Invalid number format.");
-                     }
-                  }
-               }else if (JsonParser.isDigit(currentByte)) {
-                  for (;;) {
-                     currentByte = byteHolder.getNextByte();
-                     if (JsonParser.isDigit(currentByte)) {
-                        continue;
-                     } else if (isNumberEndByte(currentByte)) {
-                        byteHolder.endCache();
-                        stringCache.append(byteHolder
-                                .getCachedBytesAsStringWithoutTrailing(
-                                "iso-8859-1"));
-                        return;
-                     } else {
-                        throw new JsonSyntaxException("Invalid number format.");
-                     }
-                  }
-               }else {
-                  throw new JsonSyntaxException("Invalid number format.");
-               }
+                // Match scientific part.
+                matchRestScientificPart(byteHolder, stringCache);
             }else {
                throw new JsonSyntaxException("Invalid number format.");
             }
          }
       }
 
+       private static void matchRestScientificPart(ByteHolder byteHolder,
+               StringBuffer stringCache)
+               throws JsonSyntaxException, EOFException {
+
+           byte currentByte = byteHolder.getNextByte();
+           if ((currentByte == '+') || (currentByte == '-')) {
+
+               currentByte = byteHolder.getNextByte();
+               if (!JsonParser.isDigit(currentByte)) {
+                   throw new JsonSyntaxException("Invalid number format.");
+               }
+
+               for (;;) {
+                   currentByte = byteHolder.getNextByte();
+                   if (JsonParser.isDigit(currentByte)) {
+                       continue;
+                   } else if (isNumberEndByte(currentByte)) {
+                       byteHolder.endCache();
+                       stringCache.append(byteHolder
+                               .getCachedBytesAsStringWithoutTrailing(
+                               "iso-8859-1"));
+                       return;
+                   } else {
+                       throw new JsonSyntaxException("Invalid number format.");
+                   }
+               }
+           } else if (JsonParser.isDigit(currentByte)) {
+               for (;;) {
+                   currentByte = byteHolder.getNextByte();
+                   if (JsonParser.isDigit(currentByte)) {
+                       continue;
+                   } else if (isNumberEndByte(currentByte)) {
+                       byteHolder.endCache();
+                       stringCache.append(byteHolder
+                               .getCachedBytesAsStringWithoutTrailing(
+                               "iso-8859-1"));
+                       return;
+                   } else {
+                       throw new JsonSyntaxException("Invalid number format.");
+                   }
+               }
+           } else {
+               throw new JsonSyntaxException("Invalid number format.");
+           }
+       }
+
       /**
-       * Examine if the byte is the end of a Json number.
+       * Examine if the byte is the end of a JSon number.
        * @param charValue the byte to examine
-       * @return if the byte is the end of a Json number
+       * @return if the byte is the end of a JSon number
        */
       private static boolean isNumberEndByte(byte charValue) {
          if (JsonParser.isWhiteSpace(charValue)
