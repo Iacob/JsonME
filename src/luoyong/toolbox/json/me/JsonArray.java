@@ -10,6 +10,10 @@ public class JsonArray {
 
     private Vector array = new Vector();
 
+    public JsonArray(Vector array) {
+        this.array = array;
+    }
+
     public void add(Object ojbect) {
         array.add(ojbect);
     }

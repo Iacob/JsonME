@@ -11,6 +11,10 @@ public class JsonObject {
 
     private Hashtable hash = new Hashtable();
 
+    public JsonObject(Hashtable hash) {
+        this.hash = hash;
+    }
+
     public void put(String key, Object value) {
         hash.put(key, value);
     }

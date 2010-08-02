@@ -9,6 +9,11 @@ public class JsonNumber {
     private String textString = null;
     private Object number = null;
 
+    public JsonNumber(String textString, Object number) {
+        this.textString = textString;
+        this.number = number;
+    }
+
     public Object getNumber() {
         return number;
     }
