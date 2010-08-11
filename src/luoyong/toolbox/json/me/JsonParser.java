@@ -315,6 +315,39 @@ public class JsonParser {
       }
    }
 
+   public static class ValueParser {
+
+      public static Object parserJsonValue(ByteHolder byteHolder)
+              throws JsonSyntaxException, EOFException{
+
+         byte nextByte = 0;
+
+         for (;;) {
+            nextByte = byteHolder.getNextByte();
+
+            if (isWhiteSpace(nextByte)) {
+               continue;
+            }else if (nextByte == '"') {
+               // TODO match string.
+            }else if ((nextByte == '-') || (isDigit(nextByte))) {
+               // TODO match number.
+            }else if (nextByte == '{') {
+               // TODO match object.
+            }else if (nextByte == '[') {
+               // TODO match array.
+            }else if (nextByte == 't') {
+               // TODO match true.
+            }else if (nextByte == 'f') {
+               // TODO match false.
+            }else if (nextByte == 'n') {
+               // TODO match null.
+            }else {
+               throw new JsonSyntaxException("Wrong value syntax.");
+            }
+         }
+      }
+   }
+
    public static boolean isDigit(byte charValue) {
       if ((charValue >= '0') && (charValue <= '9')) {
          return true;
