@@ -7,7 +7,7 @@ import java.util.Hashtable;
  *
  * @author Luo Yong &lt; luo.yong.name@gmail.com &gt;
  */
-public class JsonObject {
+public class JsonObject extends JsonValue {
 
     private Hashtable hash = new Hashtable();
 

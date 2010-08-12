@@ -4,7 +4,7 @@ package luoyong.toolbox.json.me;
  *
  * @author Luo Yong &lt; luo.yong.name@gmail.com &gt;
  */
-public class JsonString {
+public class JsonString extends JsonValue {
     
     private String content = null;
 

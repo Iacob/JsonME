@@ -6,7 +6,7 @@ import java.util.Vector;
  *
  * @author Luo Yong &lt; luo.yong.name@gmail.com &gt;
  */
-public class JsonArray {
+public class JsonArray extends JsonValue {
 
     private Vector array = new Vector();
 
