@@ -11,6 +11,26 @@ public class JsonParser {
 
    private static final String DEFAULT_CHARSET = "UTF-8";
 
+   public static JsonValue parseJsonText(ByteHolder byteHolder)
+           throws JsonSyntaxException, EOFException {
+
+      byte nextByte = 0;
+
+      nextByte = byteHolder.getNextByte();
+      while(isWhiteSpace(nextByte)) {
+         nextByte = byteHolder.getNextByte();
+      }
+
+      if (nextByte == '{') {
+         return ObjectParser.parseObject(byteHolder);
+      }else if (nextByte == '[') {
+         return ArrayParser.parseArray(byteHolder);
+      }else {
+         throw new JsonSyntaxException("Json text must be presented as "
+                 + "a Json object or a Json array.");
+      }
+   }
+
    public static class NumberParser {
       public static void matchRestNumberText(ByteHolder byteHolder,
               StringBuffer stringCache)
@@ -373,7 +393,7 @@ public class JsonParser {
 
                return jsonObject;
             }else if (nextByte == '[') {
-               // TODO match array.
+               // match array.
                JsonArray jsonArray = ArrayParser.parseArray(byteHolder);
 
                // Skip the white spaces.
@@ -515,7 +535,7 @@ public class JsonParser {
          }
       }
 
-      public static void parseObjectMember(
+      private static void parseObjectMember(
               ByteHolder byteHolder, Hashtable hashtable)
               throws JsonSyntaxException, EOFException {
 
