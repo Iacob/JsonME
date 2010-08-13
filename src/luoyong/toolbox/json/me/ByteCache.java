@@ -34,7 +34,8 @@ public class ByteCache implements ByteHolder {
    }
 
    public byte getCurrentByte() throws EOFException {
-      if (nextPosition < byteArrayLength) {
+      // The next position cursor may be out of range.
+      if (nextPosition <= byteArrayLength) {
          // Return current byte.
          return bytes[nextPosition - 1];
       }else {

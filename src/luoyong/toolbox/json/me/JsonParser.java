@@ -38,6 +38,7 @@ public class JsonParser {
 
          byteHolder.beginCacheAndCacheCurrentByte();
          byte firstByte = byteHolder.getCurrentByte();
+         System.out.println((char)firstByte);
          byte currentByte = 0;
          if (firstByte == '-') {
             currentByte = byteHolder.getNextByte();
@@ -64,7 +65,7 @@ public class JsonParser {
                   throw new JsonSyntaxException("Invalid number format.");
                }
             }
-         }else if (JsonParser.isDigit(currentByte)) {
+         }else if (JsonParser.isDigit(firstByte)) {
             for (;;) {
                currentByte = byteHolder.getNextByte();
                if (JsonParser.isDigit(currentByte)) {
@@ -538,8 +539,7 @@ public class JsonParser {
       private static void parseObjectMember(
               ByteHolder byteHolder, Hashtable hashtable)
               throws JsonSyntaxException, EOFException {
-
-         String key = null;
+         
          JsonValue value = null;
 
          byte nextByte = 0;
@@ -569,7 +569,7 @@ public class JsonParser {
 
          value = ValueParser.parserJsonValue(byteHolder);
 
-         hashtable.put(key, value);
+         hashtable.put(keyBuffer.toString(), value);
       }
    }
 
