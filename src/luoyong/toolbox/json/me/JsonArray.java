@@ -15,7 +15,7 @@ public class JsonArray extends JsonValue {
     }
 
     public void add(Object ojbect) {
-        array.add(ojbect);
+        array.addElement(ojbect);
     }
 
     public int getSize() {
@@ -23,6 +23,6 @@ public class JsonArray extends JsonValue {
     }
 
     public Object get(int index) {
-        return array.get(index);
+        return array.elementAt(index);
     }
 }

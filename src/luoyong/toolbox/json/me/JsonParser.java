@@ -490,14 +490,14 @@ public class JsonParser {
 
          JsonValue value = ValueParser.parserJsonValue(byteHolder);
 
-         vector.add(value);
+         vector.addElement(value);
 
          byte nextByte = 0;
 
          nextByte = byteHolder.getCurrentByte();
          while(nextByte == ',') {
             value = ValueParser.parserJsonValue(byteHolder);
-            vector.add(value);
+            vector.addElement(value);
             nextByte = byteHolder.getCurrentByte();
          }
 
