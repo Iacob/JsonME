@@ -38,7 +38,6 @@ public class JsonParser {
 
          byteHolder.beginCacheAndCacheCurrentByte();
          byte firstByte = byteHolder.getCurrentByte();
-         System.out.println((char)firstByte);
          byte currentByte = 0;
          if (firstByte == '-') {
             currentByte = byteHolder.getNextByte();
@@ -341,142 +340,147 @@ public class JsonParser {
 
    public static class ValueParser {
 
-      public static JsonValue parserJsonValue(ByteHolder byteHolder)
-              throws JsonSyntaxException, EOFException {
+      public static JsonValue parserJsonValue(
+              ByteHolder byteHolder,
+              boolean firstByteParsed)
+               throws JsonSyntaxException, EOFException {
 
          byte nextByte = 0;
 
-         for (;;) {
+         if (firstByteParsed) {
+            nextByte = byteHolder.getCurrentByte();
+         }else {
             nextByte = byteHolder.getNextByte();
+         }
+         // Skip white spaces.
+         while(isWhiteSpace(nextByte)) {
+            nextByte = byteHolder.getNextByte();
+         }
 
-            if (isWhiteSpace(nextByte)) {
-               // Skip the leading white spaces.
-               continue;
-            }else if (nextByte == '"') {
-               // match string.
-               StringBuffer resultBuffer = new StringBuffer();
-               StringParser.parseString(byteHolder, resultBuffer);
-               JsonString result = new JsonString(resultBuffer.toString());
+         if (nextByte == '"') {
+            // match string.
+            StringBuffer resultBuffer = new StringBuffer();
+            StringParser.parseString(byteHolder, resultBuffer);
+            JsonString result = new JsonString(resultBuffer.toString());
 
-               // Skip the white spaces.
+            // Skip the white spaces.
+            nextByte = byteHolder.getNextByte();
+            while (isWhiteSpace(nextByte)) {
                nextByte = byteHolder.getNextByte();
-               while (isWhiteSpace(nextByte)) {
-                  nextByte = byteHolder.getNextByte();
-               }
-
-               return result;
-            }else if ((nextByte == '-') || (isDigit(nextByte))) {
-               // match number.
-               StringBuffer resultBuffer = new StringBuffer();
-               NumberParser.matchRestNumberText(byteHolder, resultBuffer);
-               double resultDouble = Double.parseDouble(resultBuffer.toString());
-               JsonNumber result
-                       = new JsonNumber(resultBuffer.toString(), resultDouble);
-
-               // Skip the white spaces.
-               // The terminate character of a number itself
-               // might be a white space.
-               nextByte = byteHolder.getCurrentByte();
-               while (isWhiteSpace(nextByte)) {
-                  nextByte = byteHolder.getNextByte();
-               }
-
-               return result;
-            }else if (nextByte == '{') {
-               // match object.
-               JsonObject jsonObject = ObjectParser.parseObject(byteHolder);
-
-               // Skip the white spaces.
-               nextByte = byteHolder.getNextByte();
-               while (isWhiteSpace(nextByte)) {
-                  nextByte = byteHolder.getNextByte();
-               }
-
-               return jsonObject;
-            }else if (nextByte == '[') {
-               // match array.
-               JsonArray jsonArray = ArrayParser.parseArray(byteHolder);
-
-               // Skip the white spaces.
-               nextByte = byteHolder.getNextByte();
-               while (isWhiteSpace(nextByte)) {
-                  nextByte = byteHolder.getNextByte();
-               }
-
-               return jsonArray;
-            }else if (nextByte == 't') {
-               // match true.
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 'r') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 'u') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 'e') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-
-               // Skip the white spaces.
-               nextByte = byteHolder.getNextByte();
-               while (isWhiteSpace(nextByte)) {
-                  nextByte = byteHolder.getNextByte();
-               }
-
-               return new JsonBoolean(Boolean.TRUE.booleanValue());
-            }else if (nextByte == 'f') {
-               // match false.
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 'a') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 'l') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 's') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 'e') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-
-               // Skip the white spaces.
-               nextByte = byteHolder.getNextByte();
-               while (isWhiteSpace(nextByte)) {
-                  nextByte = byteHolder.getNextByte();
-               }
-
-               return new JsonBoolean(Boolean.FALSE.booleanValue());
-            }else if (nextByte == 'n') {
-               // match null.
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 'u') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 'l') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-               nextByte = byteHolder.getNextByte();
-               if (nextByte != 'l') {
-                  throw new JsonSyntaxException("Wrong Json value syntax.");
-               }
-
-               // Skip the white spaces.
-               nextByte = byteHolder.getNextByte();
-               while (isWhiteSpace(nextByte)) {
-                  nextByte = byteHolder.getNextByte();
-               }
-
-               return null;
-            }else {
-               throw new JsonSyntaxException("Wrong value syntax.");
             }
+
+            return result;
+         }else if ((nextByte == '-') || (isDigit(nextByte))) {
+            // match number.
+            StringBuffer resultBuffer = new StringBuffer();
+            NumberParser.matchRestNumberText(byteHolder, resultBuffer);
+            double resultDouble = Double.parseDouble(resultBuffer.toString());
+            JsonNumber result
+                    = new JsonNumber(resultBuffer.toString(), resultDouble);
+
+            // Skip the white spaces.
+            // The terminate character of a number itself
+            // might be a white space.
+            nextByte = byteHolder.getCurrentByte();
+            while (isWhiteSpace(nextByte)) {
+               nextByte = byteHolder.getNextByte();
+            }
+
+            return result;
+         }else if (nextByte == '{') {
+            // match object.
+            JsonObject jsonObject = ObjectParser.parseObject(byteHolder);
+
+            // Skip the white spaces.
+            nextByte = byteHolder.getNextByte();
+            while (isWhiteSpace(nextByte)) {
+               nextByte = byteHolder.getNextByte();
+            }
+
+            return jsonObject;
+         }else if (nextByte == '[') {
+            // match array.
+            JsonArray jsonArray = ArrayParser.parseArray(byteHolder);
+
+            // Skip the white spaces.
+            nextByte = byteHolder.getNextByte();
+            while (isWhiteSpace(nextByte)) {
+               nextByte = byteHolder.getNextByte();
+            }
+
+            return jsonArray;
+         }else if (nextByte == 't') {
+            // match true.
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 'r') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 'u') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 'e') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+
+            // Skip the white spaces.
+            nextByte = byteHolder.getNextByte();
+            while (isWhiteSpace(nextByte)) {
+               nextByte = byteHolder.getNextByte();
+            }
+
+            return new JsonBoolean(Boolean.TRUE.booleanValue());
+         }else if (nextByte == 'f') {
+            // match false.
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 'a') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 'l') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 's') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 'e') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+
+            // Skip the white spaces.
+            nextByte = byteHolder.getNextByte();
+            while (isWhiteSpace(nextByte)) {
+               nextByte = byteHolder.getNextByte();
+            }
+
+            return new JsonBoolean(Boolean.FALSE.booleanValue());
+         }else if (nextByte == 'n') {
+            // match null.
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 'u') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 'l') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+            nextByte = byteHolder.getNextByte();
+            if (nextByte != 'l') {
+               throw new JsonSyntaxException("Wrong Json value syntax.");
+            }
+
+            // Skip the white spaces.
+            nextByte = byteHolder.getNextByte();
+            while (isWhiteSpace(nextByte)) {
+               nextByte = byteHolder.getNextByte();
+            }
+
+            return new JsonNull();
+         }else {
+            throw new JsonSyntaxException("Wrong value syntax.");
          }
       }
    }
@@ -488,15 +492,26 @@ public class JsonParser {
 
          Vector vector = new Vector();
 
-         JsonValue value = ValueParser.parserJsonValue(byteHolder);
+         byte nextByte = 0;
+
+         nextByte = byteHolder.getNextByte();
+         while(isWhiteSpace(nextByte)) {
+            nextByte = byteHolder.getNextByte();
+         }
+
+         if (nextByte == ']') {
+            return new JsonArray(vector);
+         }
+
+         JsonValue value = ValueParser.parserJsonValue(byteHolder, true);
 
          vector.addElement(value);
 
-         byte nextByte = 0;
+         
 
          nextByte = byteHolder.getCurrentByte();
          while(nextByte == ',') {
-            value = ValueParser.parserJsonValue(byteHolder);
+            value = ValueParser.parserJsonValue(byteHolder, false);
             vector.addElement(value);
             nextByte = byteHolder.getCurrentByte();
          }
@@ -516,15 +531,24 @@ public class JsonParser {
 
          Hashtable hashtable = new Hashtable();
 
-         // Parse the key and value.
-         parseObjectMember(byteHolder, hashtable);
-
          byte nextByte = 0;
+
+         nextByte = byteHolder.getNextByte();
+         while(isWhiteSpace(nextByte)) {
+            nextByte = byteHolder.getNextByte();
+         }
+
+         if (nextByte == '}') {
+            return new JsonObject(hashtable);
+         }
+
+         // Parse the key and value.
+         parseObjectMember(byteHolder, hashtable, true);
 
          nextByte = byteHolder.getCurrentByte();
          while(nextByte == ',') {
             // Parse the key and value.
-            parseObjectMember(byteHolder, hashtable);
+            parseObjectMember(byteHolder, hashtable, false);
             nextByte = byteHolder.getCurrentByte();
          }
 
@@ -537,14 +561,20 @@ public class JsonParser {
       }
 
       private static void parseObjectMember(
-              ByteHolder byteHolder, Hashtable hashtable)
-              throws JsonSyntaxException, EOFException {
+              ByteHolder byteHolder,
+              Hashtable hashtable,
+              boolean firstByteParsed)
+               throws JsonSyntaxException, EOFException {
          
          JsonValue value = null;
 
          byte nextByte = 0;
 
-         nextByte = byteHolder.getNextByte();
+         if (firstByteParsed) {
+            nextByte = byteHolder.getCurrentByte();
+         }else {
+            nextByte = byteHolder.getNextByte();
+         }
          while(isWhiteSpace(nextByte)) {
             nextByte = byteHolder.getNextByte();
          }
@@ -567,7 +597,7 @@ public class JsonParser {
             throw new JsonSyntaxException("Json object need a separator.");
          }
 
-         value = ValueParser.parserJsonValue(byteHolder);
+         value = ValueParser.parserJsonValue(byteHolder, false);
 
          hashtable.put(keyBuffer.toString(), value);
       }
