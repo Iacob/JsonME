@@ -71,16 +71,26 @@ public class JsonParser {
             for (;;) {
                currentByte = byteHolder.getNextByte();
                if (JsonParser.isDigit(currentByte)) {
+
                   continue;
+                  
                } else if (currentByte == '.') {
+
                   matchFractionalAndScientificPart(byteHolder, stringCache);
                   return;
+
+               } else if ((currentByte == 'e') || (currentByte == 'E')) {
+
+                  matchRestScientificPart(byteHolder, stringCache);
+                  return;
+                  
                } else if (isNumberEndByte(currentByte)) {
 
                   byteHolder.endCache();
                   stringCache.append(byteHolder
                           .getCachedBytesAsStringWithoutTrailing("iso-8859-1"));
                   return;
+                  
                } else {
                   throw new JsonSyntaxException("Invalid number format.");
                }
