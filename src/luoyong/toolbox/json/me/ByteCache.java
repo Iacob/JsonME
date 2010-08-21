@@ -1,5 +1,7 @@
 package luoyong.toolbox.json.me;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  *
  * @author Luo Yong &lt; luo.yong.name@gmail.com &gt;
@@ -60,11 +62,15 @@ public class ByteCache implements ByteHolder {
       throw new UnsupportedOperationException("Not supported yet.");
    }
 
-   public String getCachedBytesAsString(String charset) {
+   public String getCachedBytesAsString(String charset)
+           throws UnsupportedEncodingException {
 
       if (this.endCachePosition > this.beginCachePosition) {
-         return new String(bytes, this.beginCachePosition,
-                 (this.endCachePosition - this.beginCachePosition));
+         return new String(
+                 bytes,
+                 this.beginCachePosition,
+                 this.endCachePosition - this.beginCachePosition,
+                 charset);
       }else if (this.endCachePosition == this.beginCachePosition) {
          return "";
       }else {
@@ -72,11 +78,15 @@ public class ByteCache implements ByteHolder {
       }
    }
 
-   public String getCachedBytesAsStringWithoutTrailing(String charset) {
+   public String getCachedBytesAsStringWithoutTrailing(String charset)
+           throws UnsupportedEncodingException {
 
       if ((this.endCachePosition - 1) > this.beginCachePosition) {
-         return new String(bytes, this.beginCachePosition,
-                 (this.endCachePosition - 1 - this.beginCachePosition));
+         return new String(
+                 bytes,
+                 this.beginCachePosition,
+                 this.endCachePosition - 1 - this.beginCachePosition,
+                 charset);
       }else if ((this.endCachePosition - 1)  == this.beginCachePosition) {
          return "";
       }else {

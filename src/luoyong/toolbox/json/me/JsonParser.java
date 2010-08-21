@@ -1,5 +1,6 @@
 package luoyong.toolbox.json.me;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -12,7 +13,8 @@ public class JsonParser {
    private static final String DEFAULT_CHARSET = "UTF-8";
 
    public static JsonValue parseJsonText(ByteHolder byteHolder)
-           throws JsonSyntaxException, EOFException {
+           throws JsonSyntaxException, EOFException,
+            UnsupportedEncodingException {
 
       byte nextByte = 0;
 
@@ -34,7 +36,8 @@ public class JsonParser {
    public static class NumberParser {
       public static void matchRestNumberText(ByteHolder byteHolder,
               StringBuffer stringCache)
-              throws JsonSyntaxException, EOFException {
+              throws JsonSyntaxException, EOFException,
+               UnsupportedEncodingException {
 
          byteHolder.beginCacheAndCacheCurrentByte();
          byte firstByte = byteHolder.getCurrentByte();
@@ -89,7 +92,8 @@ public class JsonParser {
 
       private static void matchFractionalAndScientificPart(ByteHolder byteHolder,
               StringBuffer stringCache)
-              throws JsonSyntaxException, EOFException {
+              throws JsonSyntaxException, EOFException,
+               UnsupportedEncodingException {
 
          byte currentByte = byteHolder.getNextByte();
 
@@ -121,7 +125,8 @@ public class JsonParser {
 
        private static void matchRestScientificPart(ByteHolder byteHolder,
                StringBuffer stringCache)
-               throws JsonSyntaxException, EOFException {
+               throws JsonSyntaxException, EOFException,
+                  UnsupportedEncodingException {
 
            byte currentByte = byteHolder.getNextByte();
 
@@ -190,7 +195,8 @@ public class JsonParser {
 
       public static void parseString(
               ByteHolder byteHolder, StringBuffer stringCache)
-              throws JsonSyntaxException, EOFException {
+              throws JsonSyntaxException, EOFException,
+               UnsupportedEncodingException {
 
          byteHolder.beginCache();
 
@@ -343,7 +349,8 @@ public class JsonParser {
       public static JsonValue parserJsonValue(
               ByteHolder byteHolder,
               boolean firstByteParsed)
-               throws JsonSyntaxException, EOFException {
+               throws JsonSyntaxException, EOFException,
+                  UnsupportedEncodingException {
 
          byte nextByte = 0;
 
@@ -488,7 +495,8 @@ public class JsonParser {
    public static class ArrayParser {
 
       public static JsonArray parseArray(ByteHolder byteHolder)
-              throws JsonSyntaxException, EOFException {
+              throws JsonSyntaxException, EOFException,
+               UnsupportedEncodingException {
 
          Vector vector = new Vector();
 
@@ -527,7 +535,8 @@ public class JsonParser {
    public static class ObjectParser {
 
       public static JsonObject parseObject(ByteHolder byteHolder)
-              throws JsonSyntaxException, EOFException {
+              throws JsonSyntaxException, EOFException,
+               UnsupportedEncodingException {
 
          Hashtable hashtable = new Hashtable();
 
@@ -564,7 +573,8 @@ public class JsonParser {
               ByteHolder byteHolder,
               Hashtable hashtable,
               boolean firstByteParsed)
-               throws JsonSyntaxException, EOFException {
+               throws JsonSyntaxException, EOFException,
+                  UnsupportedEncodingException {
          
          JsonValue value = null;
 
