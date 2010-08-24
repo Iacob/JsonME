@@ -2,8 +2,7 @@ package luoyong.toolbox.json.me;
 
 /**
  *
- * @author yong
+ * @author Luo Yong &lt; luo.yong.name@gmail.com &gt;
  */
 public class EOFException extends Exception {
-
 }

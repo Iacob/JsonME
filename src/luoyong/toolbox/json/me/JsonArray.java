@@ -22,7 +22,14 @@ public class JsonArray extends JsonValue {
         return array.size();
     }
 
-    public Object get(int index) {
-        return array.elementAt(index);
+    public JsonValue get(int index) {
+       Object result = array.elementAt(index);
+       if (result == null) {
+          return null;
+       }else if (result instanceof JsonValue) {
+          return (JsonValue)result;
+       }else {
+          return null;
+       }
     }
 }

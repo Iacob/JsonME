@@ -19,8 +19,15 @@ public class JsonObject extends JsonValue {
         hash.put(key, value);
     }
 
-    public Object get(String key) {
-        return hash.get(key);
+    public JsonValue get(String key) {
+       Object result = hash.get(key);
+       if (result == null) {
+          return null;
+       } else if (result instanceof JsonValue) {
+          return (JsonValue) result;
+       } else {
+          return null;
+       }
     }
 
     public Enumeration getKeys() {
